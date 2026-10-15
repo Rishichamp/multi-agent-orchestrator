@@ -148,3 +148,22 @@ def test_run_ecosystem_error(mock_get_orch):
 
     r = client.post("/run", json={"task": "Some task that fails"})
     assert r.status_code == 500
+
+from agents.specialists import calculate  # noqa: E402
+
+
+# ── calculator tool must not execute arbitrary Python ───────────────────────
+
+def test_calculator_does_arithmetic():
+    assert "18000.0" in calculate.invoke({"expression": "(72000-45000)/1.5"})
+
+
+def test_calculator_rejects_code_execution():
+    for attack in [
+        "().__class__.__bases__[0].__subclasses__()",
+        "__import__('os').system('echo pwned')",
+        "open('x.txt', 'w')",
+        "9**9**9",
+    ]:
+        out = calculate.invoke({"expression": attack})
+        assert "error" in out.lower(), attack

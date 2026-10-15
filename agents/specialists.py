@@ -23,6 +23,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.tools import tool
 
 from app.config import settings
+from agents.safe_math import safe_eval
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +53,8 @@ def fetch_url(url: str) -> str:
 def calculate(expression: str) -> str:
     """Evaluate a mathematical or statistical expression. Returns the numeric result."""
     try:
-        result = eval(expression, {"__builtins__": {}, "round": round, "abs": abs, "sum": sum, "max": max, "min": min, "len": len})
+        # never eval() model-written text: see agents/safe_math.py
+        result = safe_eval(expression, {"round": round, "abs": abs, "sum": sum, "max": max, "min": min, "len": len})
         return f"Result: {result}"
     except Exception as e:
         return f"Calculation error: {e}"
