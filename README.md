@@ -74,3 +74,7 @@ pytest tests/ -q
 - `web_search` and `fetch_url` return mock results. Plug in a real search API (Tavily, Serper, DuckDuckGo) for live research.
 - The `calculate` tool uses a restricted `eval`. Swap in a safe expression parser before production use.
 - Built as part of Module 3 of a Generative AI engineering programme.
+
+## Author
+
+**Rishi Singh** — [GitHub](https://github.com/Rishichamp)
